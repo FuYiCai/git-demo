@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue列表渲染，过滤与排序</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="text">
+        <input type="text" v-model="searchName">
+        <ul>
+            <li v-for="(ele,index) in filterPersons" :key="index">
+                {{index}} ---  {{ele.name}} ---{{ele.age}}
+            </li>
+        </ul>
+        <button @click ="setOrderType(2)">年龄升序</button>
+        <button @click ="setOrderType(1)">年龄降序</button>
+        <button @click ="setOrderType(0)">原样</button>
+    </div>
+    <script>
+        new Vue ({
+            el:"#text",
+            data :{
+                searchName:"",
+                orderType:0,//0代表原样 1代表降序
+                persons:[
+                    {name: "tom",age: 18},
+                    {name: "jack",age: 16},
+                    {name: "bob",age: 19},
+                    {name: "rose",age: 17}
+                ]
+            },
+            computed :{
+                filterPersons(){
+                   const {searchName,persons,orderType} = this;
+                   //filter() 方法创建一个新的数组，
+                   //indexOf() 方法可返回某个指定的字符串值在字符串中首次出现的位置
+                   let fPersons;
+                   fPersons = persons.filter(vlaue => vlaue.name.indexOf(searchName) !== -1)
+                    //排序 sort()方法默认是升序排序，如果想按照其他标准进行排序，就需要提供比较函数，
+                    if(orderType !==0){
+                        fPersons.sort(function (vla1,vla2){
+                            if(orderType ===2){
+                                return vla2.age - vla1.age
+                            }else{
+                                return vla1.age - vla2.age
+                            }
+                        })
+                    }
+                    // 不懂为啥判断加了this  .orderType渲染就不对了呢，因为computed第一次就记录了，所以不会变化
+                   return fPersons;
+                }
+            },
+            methods :{ 
+                setOrderType(num){
+                    //num变换要添加进computed，不然渲染会有问题
+                    this.orderType = num;
+                }
+            }
+        })
+    
+    </script>
+</body>
+</html>
